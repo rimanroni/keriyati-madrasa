@@ -11,6 +11,7 @@ import {
   currentMonth,
   addMonths,
   canWrite,
+  isAdmin,
   METHOD_LABEL,
   bnDate,
   waLink,
@@ -42,6 +43,7 @@ export default function Donations() {
 
   const total = list.reduce((s, d) => s + Number(d.amount), 0)
   const writer = canWrite(role)
+  const admin = isAdmin(role)
 
   function openAdd() {
     setForm({
@@ -162,9 +164,11 @@ export default function Donations() {
                 </div>
               </div>
               <div className="r-amt">{taka(d.amount)}</div>
-              <button className="btn sm wa" onClick={() => whatsapp(d)} title="WhatsApp">
-                💬
-              </button>
+              {admin && (
+                <button className="btn sm wa" onClick={() => whatsapp(d)} title="WhatsApp">
+                  💬
+                </button>
+              )}
               {writer && (
                 <button
                   onClick={() => remove(d.id)}

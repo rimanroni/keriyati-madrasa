@@ -3,11 +3,12 @@ import { useApp } from '../context/AppContext'
 import { useMadrasaData } from '../lib/useData'
 import { db } from '../lib/db'
 import { PageHeader, Modal, Avatar, Empty } from '../components/ui'
-import { bn, taka, waLink, money, initials, canWrite } from '../lib/utils'
+import { bn, taka, waLink, money, initials, canWrite, isAdmin } from '../lib/utils'
 
 export default function Members() {
   const { madrasa, role, showToast } = useApp()
   const writer = canWrite(role)
+  const admin = isAdmin(role)
   const data = useMadrasaData()
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -131,7 +132,7 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
                   {m.phone || 'নম্বর নেই'} · মোট {taka(totals.get(m.id) || 0)}
                 </div>
               </div>
-              {writer && (
+              {admin && (
                 <button className="btn sm wa" onClick={() => wa(m)} title="WhatsApp">
                   💬
                 </button>
@@ -154,7 +155,9 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
               👤 নতুন সদস্য তৈরি করুন
             </button>
             <div className="note">
-              💬 সদস্যের পাশের সবুজ বাটনে চাপলে WhatsApp-এ ধন্যবাদ/রিমাইন্ডার মেসেজ তৈরি হবে।
+              {admin
+                ? '💬 সদস্যের পাশের সবুজ বাটনে চাপলে WhatsApp-এ ধন্যবাদ/রিমাইন্ডার মেসেজ তৈরি হবে।'
+                : '🔒 WhatsApp মেসেজ শুধু অ্যাডমিন পাঠাতে পারবেন।'}
             </div>
           </>
         ) : (

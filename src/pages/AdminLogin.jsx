@@ -92,13 +92,7 @@ export default function AdminLogin() {
         </button>
       </form>
 
-      <div className="note" style={{ marginTop: 18 }}>
-        👥 <b>সাধারণ সদস্যদের কোনো লগইন লাগবে না।</b> তারা অ্যাপ খুললেই সব হিসাব, সদস্য তালিকা ও
-        নোটিশ দেখতে পাবে — শুধু দেখতে, বদলাতে পারবে না।
-        <br />
-        <br />
-        🔑 অ্যাডমিন অ্যাকাউন্ট বানাতে হবে Supabase → <b>Authentication → Users → Add user</b> থেকে।
-      </div>
+     
     </div>
   )
 }

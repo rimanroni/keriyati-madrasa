@@ -36,10 +36,10 @@ export function Empty({ icon = '📭', title, text }) {
   )
 }
 
-export function Avatar({ name, url, className = '' }) {
+export function Avatar({ name, url, className = '', style }) {
   return (
-    <div className={`av ${className}`}>
-      {url ? <img src={url} alt="" /> : initials(name)}
+    <div className={`av ${className}`} style={style}>
+      {url ? <img src={url} alt="" loading="lazy" /> : initials(name)}
     </div>
   )
 }

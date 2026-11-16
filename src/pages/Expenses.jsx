@@ -155,7 +155,7 @@ export default function Expenses() {
         )}
 
         {!writer && (
-          <div className="note">🔒 শুধু অ্যাডমিন/কোষাধ্যক্ষ খরচ যোগ করতে পারবেন।</div>
+          <div className="note" > <a href="https://wa.me/8801326552304">👤 Developer By Roni Riman</a></div>
         )}
       </div>
 

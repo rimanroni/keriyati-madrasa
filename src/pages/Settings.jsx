@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useMadrasaData } from '../lib/useData'
 import { db } from '../lib/db'
 import { PageHeader, Avatar, Empty } from '../components/ui'
+import ImagePicker from '../components/ImagePicker'
 import { THEMES } from '../lib/themes'
 import { ROLE_LABEL, isAdmin, money, bn, taka } from '../lib/utils'
 
@@ -148,15 +149,15 @@ export default function Settings() {
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
         </div>
-        <div className="field">
-          <label>লোগোর লিংক (ঐচ্ছিক)</label>
-          <input
-            className="input"
-            value={form.logo_url}
-            onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-            placeholder="https://..."
-          />
-        </div>
+        <ImagePicker
+          value={form.logo_url}
+          onChange={(url) => setForm((f) => ({ ...f, logo_url: url }))}
+          name={form.name}
+          folder="logos"
+          label="মাদ্রাসার লোগো"
+          shape="circle"
+          size={68}
+        />
         <button className="btn" onClick={saveInfo} disabled={busy}>
           {busy ? 'সেভ হচ্ছে...' : '✓ তথ্য সেভ করুন'}
         </button>
@@ -220,9 +221,7 @@ export default function Settings() {
           </div>
         ))}
 
-        <div className="note">
-          👑 রাজার চিহ্নে চাপলে মালিকানা হস্তান্তর হবে। সভাপতি বদলালে এই পদ্ধতিতে নতুন জনকে সুপার অ্যাডমিন বানান।
-        </div>
+      
 
         {/* সারসংক্ষেপ */}
         <div className="sec">সর্বকালের হিসাব</div>

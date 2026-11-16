@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useMadrasaData, monthStats, useMonthPicker } from '../lib/useData'
+import { db } from '../lib/db'
 import { PageHeader, Modal, Avatar } from '../components/ui'
+import ImagePicker from '../components/ImagePicker'
 import {
   bn,
   taka,
@@ -17,7 +19,7 @@ import {
 } from '../lib/utils'
 
 export default function Home() {
-  const { madrasa, profile, role, signOut, showToast, demoMode } = useApp()
+  const { madrasa, profile, role, signOut, showToast, demoMode, refresh } = useApp()
   const data = useMadrasaData()
   const [month, setMonth] = useMonthPicker(data)
   const [showProfile, setShowProfile] = useState(false)
@@ -59,6 +61,20 @@ export default function Home() {
   const writer = canWrite(role)
   const myName = profile?.full_name || 'সদস্য'
 
+  // এই মাসে কে কত দিয়েছে — ছবি সহ দেখানোর জন্য
+  const topDonors = useMemo(() => {
+    const map = new Map()
+    for (const d of stats.donations) {
+      if (!d.member_id) continue
+      map.set(d.member_id, (map.get(d.member_id) || 0) + Number(d.amount))
+    }
+    return data.members
+      .filter((m) => map.get(m.id))
+      .map((m) => ({ ...m, total: map.get(m.id) }))
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 6)
+  }, [stats.donations, data.members])
+
   return (
     <>
       <PageHeader
@@ -69,6 +85,7 @@ export default function Home() {
         right={
           profile ? (
             <button className="pill" onClick={() => setShowProfile(true)}>
+              {profile.avatar_url ? <img src={profile.avatar_url} alt="" /> : null}
               {myName.split(' ')[0]}
             </button>
           ) : (
@@ -209,6 +226,27 @@ export default function Home() {
           </div>
         </div>
 
+        {/* এই মাসের দাতা — ছবি সহ */}
+        {topDonors.length > 0 && (
+          <>
+            <div className="sec">
+              এই মাসের দাতা <span>{bn(topDonors.length)} জন</span>
+            </div>
+            {topDonors.map((m) => (
+              <Link to="/members" key={m.id}>
+                <div className="row">
+                  <Avatar name={m.full_name} url={m.avatar_url} />
+                  <div className="r-main">
+                    <div className="r-name">{m.full_name}</div>
+                    <div className="r-sub">{m.phone || 'নম্বর নেই'}</div>
+                  </div>
+                  <div className="r-amt">{taka(m.total)}</div>
+                </div>
+              </Link>
+            ))}
+          </>
+        )}
+
         {/* টাকা কোথা থেকে এসেছে */}
         <div className="sec">
           টাকা কোথা থেকে এসেছে <span>{taka(stats.totalIn)}</span>
@@ -277,7 +315,25 @@ export default function Home() {
 
       {showProfile && (
         <Modal title="আমার প্রোফাইল" onClose={() => setShowProfile(false)}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+          <ImagePicker
+            value={profile?.avatar_url || ''}
+            onChange={async (url) => {
+              if (!profile?.id) return
+              try {
+                await db.updateProfile(profile.id, { avatar_url: url })
+                await refresh()
+                showToast(url ? '✅ ছবি আপডেট হয়েছে' : 'ছবি সরানো হয়েছে')
+              } catch (err) {
+                showToast('❌ ' + (err.message || 'ছবি সেভ হয়নি'))
+              }
+            }}
+            name={myName}
+            folder="profiles"
+            label="আমার ছবি"
+            shape="circle"
+            size={72}
+          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <Avatar name={myName} url={profile?.avatar_url} />
             <div>
               <div style={{ fontWeight: 800, fontSize: 14 }}>{myName}</div>

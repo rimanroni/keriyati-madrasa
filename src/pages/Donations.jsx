@@ -45,6 +45,12 @@ export default function Donations() {
   const writer = canWrite(role)
   const admin = isAdmin(role)
 
+  // সদস্যের ছবি দেখানোর জন্য
+  const memberById = useMemo(
+    () => new Map(data.members.map((m) => [m.id, m])),
+    [data.members]
+  )
+
   function openAdd() {
     setForm({
       member_id: '',
@@ -156,7 +162,10 @@ export default function Donations() {
         ) : (
           list.map((d) => (
             <div className="row" key={d.id}>
-              <Avatar name={d.donor_name} />
+              <Avatar
+                name={d.donor_name}
+                url={memberById.get(d.member_id)?.avatar_url}
+              />
               <div className="r-main">
                 <div className="r-name">{d.donor_name}</div>
                 <div className="r-sub">
@@ -216,6 +225,29 @@ export default function Donations() {
               ))}
             </select>
           </div>
+
+          {form.member_id && memberById.get(form.member_id) && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 9,
+                margin: '-2px 0 10px',
+                padding: '7px 10px',
+                background: 'var(--primary-soft)',
+                borderRadius: 11
+              }}
+            >
+              <Avatar
+                name={memberById.get(form.member_id).full_name}
+                url={memberById.get(form.member_id).avatar_url}
+                style={{ width: 30, height: 30, borderRadius: 9, fontSize: 11 }}
+              />
+              <span style={{ fontSize: 11.5, fontWeight: 700 }}>
+                {memberById.get(form.member_id).full_name}
+              </span>
+            </div>
+          )}
 
           <div className="field">
             <label>দাতার নাম</label>

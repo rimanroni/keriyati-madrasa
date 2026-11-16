@@ -3,7 +3,8 @@ import { useApp } from '../context/AppContext'
 import { useMadrasaData } from '../lib/useData'
 import { db } from '../lib/db'
 import { PageHeader, Modal, Avatar, Empty } from '../components/ui'
-import { bn, taka, waLink, money, initials, canWrite, isAdmin } from '../lib/utils'
+import ImagePicker from '../components/ImagePicker'
+import { bn, taka, waLink, money, canWrite, isAdmin } from '../lib/utils'
 
 export default function Members() {
   const { madrasa, role, showToast } = useApp()
@@ -100,7 +101,7 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
               ＋ নতুন
             </button>
           ) : (
-            <div className="pill">শুধু দেখা</div>
+            <div className=""></div>
           )
         }
       />
@@ -161,19 +162,20 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
             </div>
           </>
         ) : (
-          <div className="note">
-            🔒 সদস্য যোগ, সম্পাদনা বা মুছে ফেলা শুধু অ্যাডমিন ও কোষাধ্যক্ষ করতে পারবেন।
-          </div>
+          <div className="note" > <a href="https://wa.me/8801326552304">👤 Developer By Roni Riman</a></div>
         )}
       </div>
 
       {open && (
         <Modal title={editId ? 'সদস্য সম্পাদনা' : 'নতুন সদস্য'} onClose={() => setOpen(false)}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-            <div className="av" style={{ width: 64, height: 64, borderRadius: 20, fontSize: 22 }}>
-              {form.avatar_url ? <img src={form.avatar_url} alt="" /> : initials(form.full_name || '?')}
-            </div>
-          </div>
+          <ImagePicker
+            value={form.avatar_url}
+            onChange={(url) => setForm((f) => ({ ...f, avatar_url: url }))}
+            name={form.full_name}
+            folder="members"
+            label="সদস্যের ছবি"
+            shape="circle"
+          />
 
           <div className="field">
             <label>নাম</label>
@@ -193,16 +195,6 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               placeholder="01XXXXXXXXX"
-            />
-          </div>
-
-          <div className="field">
-            <label>ছবির লিংক (ঐচ্ছিক)</label>
-            <input
-              className="input"
-              value={form.avatar_url}
-              onChange={(e) => setForm({ ...form, avatar_url: e.target.value })}
-              placeholder="https://..."
             />
           </div>
 

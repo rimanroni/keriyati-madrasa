@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { PageHeader } from '../components/ui'
+import { PageHeader, Avatar } from '../components/ui'
 import { ROLE_LABEL, bn } from '../lib/utils'
 
 const items = [
@@ -25,9 +25,12 @@ export default function More() {
         )}
 
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div className="av g" style={{ width: 44, height: 44, borderRadius: 14, fontSize: 16 }}>
-            {profile?.full_name?.slice(0, 2) || '??'}
-          </div>
+          <Avatar
+            name={profile?.full_name}
+            url={profile?.avatar_url}
+            className="g"
+            style={{ width: 44, height: 44, borderRadius: 14, fontSize: 16 }}
+          />
           <div>
             <div style={{ fontWeight: 800, fontSize: 13.5 }}>{profile?.full_name}</div>
             <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
@@ -56,7 +59,7 @@ export default function More() {
         </button>
 
         <div className="note">
-          সংস্করণ {bn('1.0.0')} · মাদ্রাসা হিসাব
+          সংস্করণ {bn('2.0.0')} · মাদ্রাসা হিসাব
         </div>
       </div>
     </>

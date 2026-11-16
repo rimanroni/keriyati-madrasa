@@ -317,6 +317,17 @@ a {
   font-weight: 800;
   white-space: nowrap;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pill img {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .pill:active {
@@ -742,6 +753,95 @@ a {
 
 .nav a.on i {
   transform: translateY(-1px) scale(1.08);
+}
+
+/* ============================ image picker ============================ */
+.img-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 11px;
+  margin-bottom: 10px;
+}
+
+.img-picker-av {
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-size: 20px;
+  font-weight: 800;
+  border: 1px dashed var(--primary);
+  transition: transform 0.12s ease;
+}
+
+.img-picker-av:active {
+  transform: scale(0.96);
+}
+
+.img-picker-av.round {
+  border-radius: 50%;
+}
+
+.img-picker-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-picker-av.busy {
+  opacity: 0.6;
+}
+
+.img-picker-badge {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface);
+}
+
+.img-picker-side {
+  flex: 1;
+  min-width: 150px;
+}
+
+.img-picker-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.img-picker-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.img-picker-actions .btn.sm {
+  margin: 0;
+}
+
+.img-picker-hint {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-weight: 500;
 }
 
 /* ============================ forms ============================ */

@@ -12,6 +12,7 @@ React + Vite + Supabase দিয়ে বানানো। ফোনের �
 - গত ৩ মাসের তুলনা (চার্ট)
 - টাকা কোথা থেকে এসেছে / কোথায় খরচ হয়েছে
 - জমার তালিকা ও খরচের তালিকা
+- 👥 সদস্য তালিকা ও প্রত্যেকের মোট জমা (শুধু দেখা)
 - নোটিশ বোর্ড
 - ❌ সেটিংস নেই (শুধু অ্যাডমিনের জন্য)
 
@@ -52,10 +53,11 @@ Supabase → **Project Settings** → **API** →
 
 ```
 VITE_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOi...
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 ```
 
-> `.env.example` ফাইলটা কপি করে নাম বদলে `.env` করলেও হবে।
+> পুরোনো প্রজেক্ট হলে `VITE_SUPABASE_ANON_KEY=eyJhbGciOi...` দিলেও চলবে।
+> ⚠️ **secret key** (`sb_secret_...`) বা **service_role key** কখনো `VITE_` প্রিফিক্স দিয়ে লিখবেন না — সেটা ব্রাউজারে চলে যায়।
 
 ### ধাপ ৪ — চালান
 
@@ -94,7 +96,7 @@ git push -u origin main
 2. **Add New → Project** → তোমার repo সিলেক্ট
 3. **Environment Variables** এ যোগ করুন:
    - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY` (নতুন) অথবা `VITE_SUPABASE_ANON_KEY` (পুরোনো)
 4. **Deploy** চাপুন → লিংক পাবে (যেমন `madrasa-hisab.vercel.app`)
 
 ### Android-এ ইনস্টল

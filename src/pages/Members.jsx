@@ -3,10 +3,11 @@ import { useApp } from '../context/AppContext'
 import { useMadrasaData } from '../lib/useData'
 import { db } from '../lib/db'
 import { PageHeader, Modal, Avatar, Empty } from '../components/ui'
-import { bn, taka, waLink, money, initials } from '../lib/utils'
+import { bn, taka, waLink, money, initials, canWrite } from '../lib/utils'
 
 export default function Members() {
-  const { madrasa, showToast } = useApp()
+  const { madrasa, role, showToast } = useApp()
+  const writer = canWrite(role)
   const data = useMadrasaData()
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -90,12 +91,16 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
     <>
       <PageHeader
         icon="👥"
-        title="সদস্য ব্যবস্থাপনা"
+        title={writer ? 'সদস্য ব্যবস্থাপনা' : 'সদস্য তালিকা'}
         subtitle={`মোট ${bn(list.length)} জন সদস্য`}
         right={
-          <button className="pill" onClick={openAdd}>
-            ＋ নতুন
-          </button>
+          writer ? (
+            <button className="pill" onClick={openAdd}>
+              ＋ নতুন
+            </button>
+          ) : (
+            <div className="pill">শুধু দেখা</div>
+          )
         }
       />
 
@@ -111,36 +116,52 @@ ${madrasa?.name || 'মাদ্রাসা'}-এ আপনার মোট জ
         {data.loading ? (
           <Empty icon="⏳" text="লোড হচ্ছে..." />
         ) : list.length === 0 ? (
-          <Empty icon="👥" title="কোনো সদস্য নেই" text="উপরে ＋ নতুন চাপুন" />
+          <Empty icon="👥" title="কোনো সদস্য নেই" text={writer ? 'উপরে ＋ নতুন চাপুন' : ''} />
         ) : (
           list.map((m) => (
             <div className="row" key={m.id}>
               <Avatar name={m.full_name} url={m.avatar_url} />
-              <div className="r-main" onClick={() => openEdit(m)}>
+              <div
+                className="r-main"
+                onClick={writer ? () => openEdit(m) : undefined}
+                style={writer ? undefined : { cursor: 'default' }}
+              >
                 <div className="r-name">{m.full_name}</div>
                 <div className="r-sub">
                   {m.phone || 'নম্বর নেই'} · মোট {taka(totals.get(m.id) || 0)}
                 </div>
               </div>
-              <button className="btn sm wa" onClick={() => wa(m)} title="WhatsApp">
-                💬
-              </button>
-              <button
-                onClick={() => remove(m.id)}
-                style={{ color: 'var(--danger)', fontSize: 14, padding: '0 2px' }}
-              >
-                ✕
-              </button>
+              {writer && (
+                <button className="btn sm wa" onClick={() => wa(m)} title="WhatsApp">
+                  💬
+                </button>
+              )}
+              {writer && (
+                <button
+                  onClick={() => remove(m.id)}
+                  style={{ color: 'var(--danger)', fontSize: 14, padding: '0 2px' }}
+                >
+                  ✕
+                </button>
+              )}
             </div>
           ))
         )}
 
-        <button className="btn" onClick={openAdd}>
-          👤 নতুন সদস্য তৈরি করুন
-        </button>
-        <div className="note">
-          💬 সদস্যের পাশের সবুজ বাটনে চাপলে WhatsApp-এ ধন্যবাদ/রিমাইন্ডার মেসেজ তৈরি হবে।
-        </div>
+        {writer ? (
+          <>
+            <button className="btn" onClick={openAdd}>
+              👤 নতুন সদস্য তৈরি করুন
+            </button>
+            <div className="note">
+              💬 সদস্যের পাশের সবুজ বাটনে চাপলে WhatsApp-এ ধন্যবাদ/রিমাইন্ডার মেসেজ তৈরি হবে।
+            </div>
+          </>
+        ) : (
+          <div className="note">
+            🔒 সদস্য যোগ, সম্পাদনা বা মুছে ফেলা শুধু অ্যাডমিন ও কোষাধ্যক্ষ করতে পারবেন।
+          </div>
+        )}
       </div>
 
       {open && (

@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext'
 import { isAdmin } from '../lib/utils'
 import { Toast } from './ui'
 
+// সবাই এগুলো দেখবে
 const baseItems = [
   { to: '/', icon: '🏠', label: 'হোম', end: true },
   { to: '/donations', icon: '📥', label: 'জমা' },
@@ -13,7 +14,12 @@ const baseItems = [
 export default function Layout() {
   const { role } = useApp()
   const admin = isAdmin(role)
-  const items = admin ? [...baseItems, { to: '/more', icon: '⚙️', label: 'আরও' }] : baseItems
+
+  // ভিউয়ার: হোম · জমা · খরচ · নোটিশ · সদস্য
+  // অ্যাডমিন: হোম · জমা · খরচ · নোটিশ · আরও (ভেতরে সদস্য + সেটিংস)
+  const items = admin
+    ? [...baseItems, { to: '/more', icon: '⚙️', label: 'আরও' }]
+    : [...baseItems, { to: '/members', icon: '👥', label: 'সদস্য' }]
 
   return (
     <div className="app">

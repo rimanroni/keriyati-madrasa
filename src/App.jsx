@@ -44,7 +44,7 @@ export default function App() {
         <Route path="expenses" element={<Expenses />} />
         <Route path="notices" element={<Notices />} />
         <Route path="more" element={admin ? <More /> : <Navigate to="/" replace />} />
-        <Route path="members" element={admin ? <Members /> : <Navigate to="/" replace />} />
+        <Route path="members" element={<Members />} />
         <Route path="settings" element={admin ? <Settings /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

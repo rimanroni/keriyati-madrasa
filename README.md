@@ -129,7 +129,7 @@ git push -u origin main
 
 - **লেখা:** Hind Siliguri
 - **হেডিং:** Baloo Da 2
-- **সংখ্যা:** bold + সমান চওড়া (tabular numbers), তাই ৳ ২,৯৯০ পরিষ্কার পড়া যায়
+- **সংখ্যা:** আলাদা bold ফন্ট (Hind Siliguri 700) — শুধু সংখ্যা ও ৳ চিহ্নে প্রযোজ্য, তাই সব হিসাব মোটা ও স্পষ্ট দেখায়। সাথে tabular numbers, তাই অঙ্কগুলো খাড়াখাড়ি বসে।
 
 নতুন থিম: `src/index.css`-এ `[data-theme='নাম']` ব্লক + `src/lib/themes.js`-এ নাম।
 

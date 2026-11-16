@@ -3,10 +3,31 @@
    সব রঙ CSS ভেরিয়েবলে, তাই থিম বদলালেই পুরো অ্যাপ বদলে যায়
    ========================================================== */
 
+/* সংখ্যার জন্য আলাদা bold ফন্ট (Hind Siliguri 700)
+   — শুধু সংখ্যা ও ৳ চিহ্নে প্রযোজ্য, তাই টেক্সট স্বাভাবিক থাকে */
+@font-face {
+  font-family: 'HisabNum';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./assets/fonts/hind-700-bengali.woff2') format('woff2');
+  unicode-range: U+09E6-09EF, U+09F2-09F9;
+}
+
+@font-face {
+  font-family: 'HisabNum';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./assets/fonts/hind-700-latin.woff2') format('woff2');
+  unicode-range: U+0024, U+0025, U+002B, U+002C, U+002D, U+002E, U+0030-0039;
+}
+
 /* ফন্ট */
 :root {
-  --font-body: 'Hind Siliguri', 'Noto Sans Bengali', 'Nirmala UI', system-ui,
-    -apple-system, 'Segoe UI', sans-serif;
+  --font-num: 'HisabNum';
+  --font-body: 'HisabNum', 'Hind Siliguri', 'Noto Sans Bengali', 'Nirmala UI',
+    system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-head: 'Baloo Da 2', 'Hind Siliguri', 'Noto Sans Bengali', system-ui,
     sans-serif;
 }

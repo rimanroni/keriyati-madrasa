@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { supabase, isConfigured } from '../lib/supabase'
-import { DEMO_MODE, db } from '../lib/db'
+import { DEMO_MODE } from '../lib/db'
 import * as demoStore from '../lib/demo'
 import { applyTheme, storedTheme } from '../lib/themes'
 
@@ -28,6 +28,28 @@ export function AppProvider({ children }) {
     window.__toastTimer = window.setTimeout(() => setToast(''), 2600)
   }, [])
 
+  /**
+   * সবার জন্য খোলা মাদ্রাসার তথ্য (লগইন ছাড়াই পড়া যায়)।
+   * এখান থেকেই থিম ও নাম আসে, তাই ভিউয়ারও অ্যাডমিনের দেওয়া থিম দেখে।
+   */
+  const loadPublicMadrasa = useCallback(async () => {
+    if (!supabase) return null
+    const { data, error } = await supabase
+      .from('madrasas')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle()
+    if (error) {
+      console.error('madrasa load', error)
+      return null
+    }
+    setMadrasa(data || null)
+    if (data?.theme) setThemeState(applyTheme(data.theme))
+    return data
+  }, [])
+
+  /** অ্যাডমিন লগইন করলে তার প্রোফাইল ও মাদ্রাসা */
   const loadProfile = useCallback(async (userId) => {
     if (!supabase || !userId) return null
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
@@ -39,13 +61,19 @@ export function AppProvider({ children }) {
 
     if (data?.madrasa_id) {
       const { data: m } = await supabase.from('madrasas').select('*').eq('id', data.madrasa_id).maybeSingle()
-      setMadrasa(m || null)
-      if (m?.theme) setThemeState(applyTheme(m.theme))
+      if (m) {
+        setMadrasa(m)
+        if (m.theme) setThemeState(applyTheme(m.theme))
+      } else {
+        await loadPublicMadrasa()
+      }
+    } else {
+      await loadPublicMadrasa()
     }
     return data
-  }, [])
+  }, [loadPublicMadrasa])
 
-  // ---------------- ডেমো মোড ----------------
+  // ---------------- ডেমো মোড (Supabase সেট করা নেই) ----------------
   useEffect(() => {
     if (!DEMO_MODE) return
     const d = demoStore.load()
@@ -68,6 +96,7 @@ export function AppProvider({ children }) {
       const s = data?.session ?? null
       setSession(s)
       if (s?.user) await loadProfile(s.user.id)
+      else await loadPublicMadrasa()
       if (alive) setLoading(false)
     })
 
@@ -77,7 +106,7 @@ export function AppProvider({ children }) {
         await loadProfile(s.user.id)
       } else {
         setProfile(null)
-        setMadrasa(null)
+        await loadPublicMadrasa()
       }
     })
 
@@ -85,33 +114,24 @@ export function AppProvider({ children }) {
       alive = false
       sub?.subscription?.unsubscribe()
     }
-  }, [loadProfile])
+  }, [loadProfile, loadPublicMadrasa])
 
   const refresh = useCallback(async () => {
     if (DEMO_MODE) {
       const d = demoStore.load()
-      setProfile(d.profiles.find((p) => p.id === d.profiles[0].id) || d.profiles[0])
+      setProfile(d.profiles[0])
       setMadrasa(d.madrasas[0])
       return
     }
     if (session?.user) await loadProfile(session.user.id)
-  }, [session, loadProfile])
+    else await loadPublicMadrasa()
+  }, [session, loadProfile, loadPublicMadrasa])
 
+  // ---------------- শুধু অ্যাডমিন লগইন ----------------
   const signIn = useCallback(async (email, password) => {
     if (DEMO_MODE) return
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-  }, [])
-
-  const signUp = useCallback(async (email, password, fullName, phone) => {
-    if (DEMO_MODE) return {}
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName, phone } }
-    })
-    if (error) throw error
-    return data
   }, [])
 
   const signOut = useCallback(async () => {
@@ -121,13 +141,16 @@ export function AppProvider({ children }) {
     }
     await supabase.auth.signOut()
     setProfile(null)
-    setMadrasa(null)
-  }, [showToast])
+    await loadPublicMadrasa()
+  }, [showToast, loadPublicMadrasa])
+
+  const loggedIn = Boolean(session?.user)
 
   const value = useMemo(
     () => ({
       session,
       user: session?.user ?? null,
+      loggedIn,
       profile,
       madrasa,
       role: profile?.role ?? null,
@@ -135,14 +158,26 @@ export function AppProvider({ children }) {
       theme,
       setTheme,
       signIn,
-      signUp,
       signOut,
       refresh,
       showToast,
       toast,
       demoMode: DEMO_MODE
     }),
-    [session, profile, madrasa, loading, theme, setTheme, signIn, signUp, signOut, refresh, showToast, toast]
+    [
+      session,
+      loggedIn,
+      profile,
+      madrasa,
+      loading,
+      theme,
+      setTheme,
+      signIn,
+      signOut,
+      refresh,
+      showToast,
+      toast
+    ]
   )
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

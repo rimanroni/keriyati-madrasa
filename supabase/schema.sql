@@ -154,8 +154,9 @@ alter table public.audit_logs          enable row level security;
 
 -- ---------- madrasas ----------
 drop policy if exists "madrasa read" on public.madrasas;
-create policy "madrasa read" on public.madrasas
-  for select to authenticated using (id = public.my_madrasa_id());
+drop policy if exists "madrasa public read" on public.madrasas;
+create policy "madrasa public read" on public.madrasas
+  for select to anon, authenticated using (true);
 
 drop policy if exists "madrasa update" on public.madrasas;
 create policy "madrasa update" on public.madrasas
@@ -182,8 +183,9 @@ create policy "profile admin insert" on public.profiles
 
 -- ---------- members ----------
 drop policy if exists "member read" on public.members;
-create policy "member read" on public.members
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "member public read" on public.members;
+create policy "member public read" on public.members
+  for select to anon, authenticated using (true);
 
 drop policy if exists "member write" on public.members;
 create policy "member write" on public.members
@@ -193,8 +195,9 @@ create policy "member write" on public.members
 
 -- ---------- donations ----------
 drop policy if exists "donation read" on public.donations;
-create policy "donation read" on public.donations
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "donation public read" on public.donations;
+create policy "donation public read" on public.donations
+  for select to anon, authenticated using (true);
 
 drop policy if exists "donation write" on public.donations;
 create policy "donation write" on public.donations
@@ -204,8 +207,9 @@ create policy "donation write" on public.donations
 
 -- ---------- expense_categories ----------
 drop policy if exists "cat read" on public.expense_categories;
-create policy "cat read" on public.expense_categories
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "cat public read" on public.expense_categories;
+create policy "cat public read" on public.expense_categories
+  for select to anon, authenticated using (true);
 
 drop policy if exists "cat write" on public.expense_categories;
 create policy "cat write" on public.expense_categories
@@ -215,8 +219,9 @@ create policy "cat write" on public.expense_categories
 
 -- ---------- expenses ----------
 drop policy if exists "expense read" on public.expenses;
-create policy "expense read" on public.expenses
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "expense public read" on public.expenses;
+create policy "expense public read" on public.expenses
+  for select to anon, authenticated using (true);
 
 drop policy if exists "expense write" on public.expenses;
 create policy "expense write" on public.expenses
@@ -226,8 +231,9 @@ create policy "expense write" on public.expenses
 
 -- ---------- opening_balances ----------
 drop policy if exists "opening read" on public.opening_balances;
-create policy "opening read" on public.opening_balances
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "opening public read" on public.opening_balances;
+create policy "opening public read" on public.opening_balances
+  for select to anon, authenticated using (true);
 
 drop policy if exists "opening write" on public.opening_balances;
 create policy "opening write" on public.opening_balances
@@ -237,8 +243,9 @@ create policy "opening write" on public.opening_balances
 
 -- ---------- notices ----------
 drop policy if exists "notice read" on public.notices;
-create policy "notice read" on public.notices
-  for select to authenticated using (madrasa_id = public.my_madrasa_id());
+drop policy if exists "notice public read" on public.notices;
+create policy "notice public read" on public.notices
+  for select to anon, authenticated using (true);
 
 drop policy if exists "notice write" on public.notices;
 create policy "notice write" on public.notices

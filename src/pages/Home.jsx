@@ -17,7 +17,7 @@ import {
 } from '../lib/utils'
 
 export default function Home() {
-  const { madrasa, profile, role, signOut, showToast } = useApp()
+  const { madrasa, profile, role, signOut, showToast, demoMode } = useApp()
   const data = useMadrasaData()
   const [month, setMonth] = useMonthPicker(data)
   const [showProfile, setShowProfile] = useState(false)
@@ -67,13 +67,26 @@ export default function Home() {
         title={madrasa?.name || 'মাদ্রাসা'}
         subtitle={month ? monthLabel(month) : '...'}
         right={
-          <button className="pill" onClick={() => setShowProfile(true)}>
-            {myName.split(' ')[0]}
-          </button>
+          profile ? (
+            <button className="pill" onClick={() => setShowProfile(true)}>
+              {myName.split(' ')[0]}
+            </button>
+          ) : (
+            <Link to="/admin" className="pill" title="অ্যাডমিন লগইন">
+              🔐 অ্যাডমিন
+            </Link>
+          )
         }
       />
 
       <div className="app-body">
+        {!madrasa && !demoMode && (
+          <div className="note" style={{ marginTop: 0, marginBottom: 12 }}>
+            ⚠️ ডেটা পাওয়া যাচ্ছে না। Supabase → SQL Editor-এ <b>supabase/public-viewer.sql</b>{' '}
+            ফাইলটা একবার চালান, তারপর পেজ রিফ্রেশ করুন।
+          </div>
+        )}
+
         {/* মাস নির্বাচন */}
         <div
           style={{

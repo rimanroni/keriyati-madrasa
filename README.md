@@ -62,6 +62,10 @@ Supabase → **Authentication → Users → Add user → Create new user**
 > প্রথম ইউজার স্বয়ংক্রিয়ভাবে **সুপার অ্যাডমিন (owner)** হবে।
 > পরে সেটিংস থেকে অন্য সদস্যকে অ্যাডমিন বানাতে পারবে।
 
+**যদি লগইন করার পরও অ্যাডমিন না দেখায়** (আগে কেউ টেস্টে সাইনআপ করে ফেললে এমন হয়):
+`supabase/make-admin.sql` ফাইলে তোমার ইমেইল বসিয়ে Supabase → SQL Editor-এ Run করো।
+তখনই তোমার রোল `owner` হয়ে যাবে।
+
 **Confirm email বন্ধ রাখতে:** Authentication → Sign In / Providers → Email → *Confirm email* বন্ধ করুন।
 
 ### ধাপ ৪ — `.env` ফাইল

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useApp } from './context/AppContext'
 import Layout from './components/Layout'
@@ -29,9 +30,21 @@ function Loading() {
 }
 
 export default function App() {
-  const { loading, role } = useApp()
+  const { loading, role, loggedIn, profile } = useApp()
+  const [grace, setGrace] = useState(false)
 
-  if (loading) return <Loading />
+  // লগইনের পর প্রোফাইল আসতে এক মুহূর্ত লাগে — ততক্ষণ লোডিং দেখাই
+  // (৩ সেকেন্ডেও না এলে আটকে না রেখে এগিয়ে যাই)
+  useEffect(() => {
+    if (!loggedIn || profile) {
+      setGrace(false)
+      return
+    }
+    const t = window.setTimeout(() => setGrace(true), 3000)
+    return () => window.clearTimeout(t)
+  }, [loggedIn, profile])
+
+  if (loading || (loggedIn && !profile && !grace)) return <Loading />
 
   const admin = isAdmin(role)
 
